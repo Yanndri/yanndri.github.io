@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enter Your Name and Save to Firestore</title>
+
+    <!-- Firebase App (Firebase SDK v9 with compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-app-compat.js"></script>
+    <!-- Firebase Firestore (Firebase SDK v9 with compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore-compat.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+      }
+      .container {
+        text-align: center;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      input[type="text"] {
+        padding: 10px;
+        width: 200px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+      button {
+        padding: 10px 20px;
+        border: none;
+        background-color: #4caf50;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      .message {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Please Enter Your Name</h2>
+      <form id="nameForm">
+        <input type="text" id="nameInput" placeholder="Your Name" required />
+        <br /><br />
+        <button type="submit">Submit</button>
+      </form>
+      <div class="message" id="message"></div>
+    </div>
+
+    <script>
+      // Initialize Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyCS-xuiHjE7itDsceLVmreAQRLjx5ipcus",
+        authDomain: "libraryusers.firebaseapp.com",
+        projectId: "libraryusers",
+        storageBucket: "libraryusers.firebasestorage.app",
+        messagingSenderId: "1018136736284",
+        appId: "1:1018136736284:web:95f0ba4e07dfc249b565d9",
+        measurementId: "G-YLRBWR1XDB",
+      };
+
+      // Initialize Firebase App (using compat libraries)
+      firebase.initializeApp(firebaseConfig);
+
+      // Initialize Firestore
+      const db = firebase.firestore();
+
+      // Handle form submission
+      document
+        .getElementById("nameForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault(); // Prevent form from refreshing the page
+          const name = document.getElementById("nameInput").value;
+          const messageDiv = document.getElementById("message");
+
+          try {
+            // Add the name to Firestore in the 'users' collection
+            const docRef = await db.collection("users").add({
+              name: name,
+              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            });
+            messageDiv.innerHTML = `Welcome, <strong>${name}</strong>! Your name has been added to the database with ID: ${docRef.id}`;
+          } catch (error) {
+            console.error("Error adding document: ", error);
+            messageDiv.innerHTML = "An error occurred while saving your name.";
+          }
+        });
+    </script>
+  </body>
+</html>
